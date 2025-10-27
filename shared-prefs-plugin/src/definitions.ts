@@ -1,6 +1,7 @@
-// Define the interfaces for TypeScript
+import '@capacitor/core';
+
 declare module '@capacitor/core' {
-  interface PluginRegistry {
+  interface CapacitorPlugins {
     SharedPrefsPlugin: SharedPrefsPlugin;
   }
 }
