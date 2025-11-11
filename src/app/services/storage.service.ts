@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Preferences} from '@capacitor/preferences';
-import { Storage } from '@capacitor/storage';
 import {User} from "../pages/account/account";
 
 // Save JSON data

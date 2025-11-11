@@ -1,4 +1,5 @@
-// The pluginManagement block must be the first block in the script.
+// settings.gradle
+
 pluginManagement {
   repositories {
     google()
@@ -9,16 +10,16 @@ pluginManagement {
 
 // All other statements must come after pluginManagement.
 dependencyResolutionManagement {
-  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  // Allow project repositories (needed for flatDir) while preferring settings-defined ones
+  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
   repositories {
     google()
     mavenCentral()
   }
 }
-
-rootProject.name = "YourProjectName"
+rootProject.name = "Android-vlc-Remote"
 include ':app'
 include ':capacitor-cordova-android-plugins'
-project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+project(':capacitor-cordova-android-plugins').projectDir = new java.io.File('./capacitor-cordova-android-plugins/')
 
 apply from: 'capacitor.settings.gradle'

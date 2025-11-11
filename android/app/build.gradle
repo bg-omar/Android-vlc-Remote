@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
 
   namespace 'com.omariskandarani.vlcremote'
-  compileSdkVersion rootProject.ext.compileSdkVersion
+  compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.omariskandarani.vlcremote"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -44,6 +44,7 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
     implementation project(':capacitor-cordova-android-plugins')
+    implementation project(':shared-prefs-plugin')
 }
 
 apply from: 'capacitor.build.gradle'

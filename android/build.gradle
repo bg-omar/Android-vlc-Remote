@@ -1,13 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  // The buildscript block can often be simplified or removed
-  // when using version catalogs for plugins.
   repositories {
     google()
     mavenCentral()
   }
   dependencies {
+    // It's recommended to move these to your version catalog as well
+    // but this will work for now.
     classpath libs.gradle
     classpath libs.google.services
   }
@@ -15,7 +15,8 @@ buildscript {
 
 plugins {
   alias(libs.plugins.android.application) apply false
-  alias(libs.plugins.google.services.plugin) apply false // Ensure the alias matches the TOML file
+  // Fixed alias: catalog defines [plugins] google-services, not google.services.plugin
+  alias(libs.plugins.google.services) apply false
 }
 
 tasks.register('clean', Delete) {
@@ -23,10 +24,3 @@ tasks.register('clean', Delete) {
 }
 
 apply from: "variables.gradle"
-
-allprojects {
-  repositories {
-    google()
-    mavenCentral()
-  }
-}
