@@ -24,6 +24,7 @@ dependencies {
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-toast')
     implementation project(':shared-prefs-plugin')
+    implementation project(':com-omariskandarani-vlcremote-plugin')
 
 }
 

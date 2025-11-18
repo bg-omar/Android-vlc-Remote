@@ -16,6 +16,17 @@ dependencyResolutionManagement {
     google()
     mavenCentral()
   }
+  // Added version catalogs for libs.* resolution
+  versionCatalogs {
+    create("libs") {
+      library("appcompat", "androidx.appcompat:appcompat:1.6.1")
+      library("coordinatorlayout", "androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+      library("core-splashscreen", "androidx.core:core-splashscreen:1.0.1")
+      library("junit", "junit:junit:4.13.2")
+      library("ext-junit", "androidx.test.ext:junit:1.1.5")
+      library("espresso-core", "androidx.test.espresso:espresso-core:3.5.1")
+    }
+  }
 }
 rootProject.name = "Android-vlc-Remote"
 include ':app'

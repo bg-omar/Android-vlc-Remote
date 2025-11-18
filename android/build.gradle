@@ -6,19 +6,14 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    // It's recommended to move these to your version catalog as well
-    // but this will work for now.
-    classpath libs.gradle
-    classpath libs.google.services
+    // Explicit classpath versions (removed libs.* catalog references which were undefined)
+    classpath 'com.android.tools.build:gradle:8.2.2'
+    // Google services if needed (leave commented if not using Firebase features)
+    // classpath 'com.google.gms:google-services:4.4.0'
   }
 }
 
-plugins {
-  alias(libs.plugins.android.application) apply false
-  // Fixed alias: catalog defines [plugins] google-services, not google.services.plugin
-  alias(libs.plugins.google.services) apply false
-}
-
+// Clean task
 tasks.register('clean', Delete) {
   delete rootProject.buildDir
 }

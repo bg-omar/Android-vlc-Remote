@@ -46,3 +46,6 @@ project(':capacitor-toast').projectDir = new File('../node_modules/@capacitor/to
 
 include ':shared-prefs-plugin'
 project(':shared-prefs-plugin').projectDir = new File('../shared-prefs-plugin/android')
+
+include ':com-omariskandarani-vlcremote-plugin'
+project(':com-omariskandarani-vlcremote-plugin').projectDir = new File('../com-omariskandarani-vlcremote-plugin/android')
