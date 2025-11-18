@@ -60,16 +60,21 @@ export class AccountPage implements OnInit {
 
 
   public getterdata: User[] = [];
-  configForm: any;
+  configForm: any = {ipAddress: 'http://localhost'};
   vlcPass: string = '';
+  // Replaced static basePrefix with configurable segments & localhost toggle
+  useLocalhost: boolean = false;
+  segment1: string = '192';
+  segment2: string = '168';
+  segment3: string = '2';
+  segment4: string = '2';
+  port: string = '8080';
+  get basePrefix(): string { return this.useLocalhost ? this.configForm.ipAddress : `http://${this.segment1}.${this.segment2}.${this.segment3}`; }
 
   constructor(
     private userService: UserService,
     public storageServive: StorageService,
-    public alertCtrl: AlertController,
     public router: Router,
-    public userData: UserData,
-    public navCtrl: NavController,
     private fb: FormBuilder) {
   }
 
@@ -98,32 +103,34 @@ export class AccountPage implements OnInit {
   }
 
   setJson(setter: number) {
+
     if (setter == 1) {
       this.getJson(setter).then(r => console.log("getting before setting: "));
+      const portVal = this.norm(this.port);
+      const portNum = Number(portVal || '8080');
+      if (isNaN(portNum) || portNum < 1 || portNum > 65535) { console.warn('Invalid port (1-65535)'); return; }
 
-      let ip = [{
-        'ipAddress': 'http://192.168.2.' + this.user.ipAddress + '/mobile.html',
-        'hide': this.user.hide || false
-      }]
-      if (this.getterdata.find(value => value.ipAddress === ip[0].ipAddress)) {
-        console.log("%c 1 --> something: ", "color:#f0f;");
-      } else if (this.user.ipAddress === undefined) {
-        console.log("%c 2 --> 114||C:/workspace/projects/Android-vlc-Remote/src/app/pages/account/account.ts\n this.user.ipAddress: ", "color:#0f0;", this.user.ipAddress);
+      let fullUrl: string;
+      if (this.useLocalhost) {
+        fullUrl = `${this.basePrefix}:${portNum}/mobile.html`;
       } else {
-        this.getterdata = [
-          ...this.getterdata,
-          ...ip
-        ].filter(value => value.ipAddress)
+        if (!this.validateSegments()) { console.warn('Invalid segment (0-255)'); return; }
+        const segment4Str = this.norm(this.segment4);
+        if (!segment4Str) { console.warn('No last octet provided'); return; }
+        const segment4Num = Number(segment4Str);
+        if (isNaN(segment4Num) || segment4Num < 0 || segment4Num > 255) { console.warn('Invalid last octet (0-255)'); return; }
+        fullUrl = `${this.basePrefix}.${segment4Num}:${portNum}/mobile.html`;
       }
-      let configAccount: User[] = this.getterdata;
-      this.storageServive.setData("VLC", configAccount).then(r => {
-      });
-      // this.storageServive.setData('pass', config).then(r =>{});
 
+      const ip = [{ ipAddress: fullUrl, hide: this.user?.hide || false }];
+      if (this.getterdata.find(v => v.ipAddress === fullUrl)) {
+        console.log('%c Duplicate IP, skipping add.', 'color:#f0f;', fullUrl);
+      } else {
+        this.getterdata = [...this.getterdata, ...ip].filter(v => v.ipAddress);
+        this.storageServive.setData('VLC', this.getterdata).then(() => {});
+      }
     }
-
     this.getJson(setter).then(r => console.log("getting after setting: "));
-
   }
 
   async getJson(getter: number) {
@@ -179,6 +186,9 @@ export class AccountPage implements OnInit {
     }
   }
 
+  setLocalhost(){
+    this.useLocalhost = !this.useLocalhost;
+  }
   ipValidator(ipAddress: FormControl): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const regex = /^(?:\d{1,3}\.){3}\d{1,3}:(?:6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|\d{1,4})$/;
@@ -186,4 +196,19 @@ export class AccountPage implements OnInit {
       return valid ? null : {ipAddress: valid}
     };
   }
+
+  // Helpers used by template
+  builtPreview(): string {
+    const p = this.norm(this.port) || '8080';
+    if (this.useLocalhost) return `${this.basePrefix}:${p}/mobile.html`;
+    const last = this.norm(this.segment4) || 'x';
+    return `${this.basePrefix}.${last}:${p}/mobile.html`;
+  }
+  validateSegment(s: string): boolean { const n = Number(this.norm(s)); return !isNaN(n) && n >= 0 && n <= 255; }
+  validateSegments(): boolean { return this.validateSegment(this.segment1) && this.validateSegment(this.segment2) && this.validateSegment(this.segment3); }
+  validateLastOctet(): boolean { if (this.useLocalhost) return true; const n = Number(this.norm(this.segment4)); return !isNaN(n) && n >= 0 && n <= 255; }
+  validatePort(): boolean { const n = Number(this.norm(this.port)); return !isNaN(n) && n >= 1 && n <= 65535; }
+  validateReady(): boolean { return this.useLocalhost ? this.validatePort() : (this.validateSegments() && this.validateLastOctet() && this.validatePort()); }
+
+  private norm(val: any): string { return (val === null || val === undefined ? '' : String(val)).trim(); }
 }

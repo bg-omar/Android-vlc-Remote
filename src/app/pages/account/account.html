@@ -29,26 +29,44 @@
     </ion-item>
   </ion-list>
 
-    <div class="ion-padding">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Add an other VLC</ion-card-title>
-        </ion-card-header>
+  <div class="ion-padding">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Add an other VLC</ion-card-title>
+      </ion-card-header>
 
-        <ion-card-content>
-      <ion-list>
-        <ion-item>
-          <ion-input type="text"
-                     [helperText]="'x:port    x = 192.168.2.x:8080 '"
-                     [placeholder]="'2:8080'"
-                     [(ngModel)]="configForm.ipAddress">
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-button (click)="setLocalhost()">Use localhost</ion-button>
+            <ion-item  *ngIf="!useLocalhost">
+              <ion-input type="number" label="Segment 1" labelPlacement="stacked"  [(ngModel)]="segment1"/>.
+              <ion-input type="number" label="Segment 2" labelPlacement="stacked"  [(ngModel)]="segment2"/>.
+              <ion-input type="number" label="Segment 3" labelPlacement="stacked"  [(ngModel)]="segment3"/>.
+              <ion-input type="number" label="Segment 4" labelPlacement="stacked"  [(ngModel)]="segment4"/>
+            </ion-item>
+            <ion-item  *ngIf="useLocalhost">
+              <ion-input type="text"
+                         [placeholder]="'http://localhost'"
+                         label="Custom ip address" labelPlacement="stacked"
+                         [(ngModel)]="configForm.ipAddress">
 
-          </ion-input>
-          <ion-button class="butt" (click)="setJson(1)">Add</ion-button>
-        </ion-item>
-      </ion-list>
+              </ion-input>
+            </ion-item>
+            :<ion-input type="number" [(ngModel)]="port"/>
 
-        </ion-card-content>
-      </ion-card>
-    </div>
+            <ion-button class="butt" (click)="setJson(1)">Add</ion-button>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-note color="medium">Preview: {{ builtPreview() }}</ion-note>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-button class="butt" [disabled]="!validateLastOctet() || !validatePort()" (click)="setJson(1)">Add</ion-button>
+          </ion-item>
+        </ion-list>
+
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
